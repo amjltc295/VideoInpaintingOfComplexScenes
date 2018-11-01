@@ -36,7 +36,7 @@ image volume, given the correspondances (displacement) field*/
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
         nTupleVolume<float> *imgVol, *occVol, *dispField;
-        int * imgVolSizes, *dispFieldSizes;
+        const mwSize * imgVolSizes, *dispFieldSizes;
         float sigmaColour;
         float *dispFieldTemp;
         int nY, nX, nT;
@@ -63,9 +63,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         }
 
         /* Get sizes of variables*/
-        imgVolSizes = (int*)mxGetDimensions(prhs[IMG_VOL_INPUT]);  /* sizes of imgVol*/
+        imgVolSizes = mxGetDimensions(prhs[IMG_VOL_INPUT]);  /* sizes of imgVol*/
         numDimsImgVol = (int)mxGetNumberOfDimensions(prhs[IMG_VOL_INPUT]);  /*length of sizes of imgVolA*/
-        dispFieldSizes = (int*)mxGetDimensions(prhs[DISP_FIELD_INPUT]);  /*sizes of imgVolB*/
+        dispFieldSizes = mxGetDimensions(prhs[DISP_FIELD_INPUT]);  /*sizes of imgVolB*/
         numDimsDispField = (int)mxGetNumberOfDimensions(prhs[DISP_FIELD_INPUT]);  /* length of sizes of dispField*/
         
         if ((numDimsImgVol != 4) || (numDimsDispField != 4))

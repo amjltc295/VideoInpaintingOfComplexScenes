@@ -42,7 +42,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
         float *imgVolATemp, *imgVolBTemp,
                 *imgVolOccTemp, *firstGuessVolTemp, *imgVolModTemp;
-        int * imgSizesA, * imgSizesB;
+        const mwSize * imgSizesA, * imgSizesB;
         float *dispFieldTemp;
         nTupleVolume<float> *dispField;
         int nXdisp,nYdisp,nTdisp;
@@ -80,9 +80,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         
 
         // Get sizes of variables
-        imgSizesA = (int*)mxGetDimensions (prhs[IMG_VOL_A_INPUT]);  // sizes of imgVolA
+        imgSizesA = mxGetDimensions (prhs[IMG_VOL_A_INPUT]);  // sizes of imgVolA
         numDimsA = (int)mxGetNumberOfDimensions(prhs[IMG_VOL_A_INPUT]);  // number of dimensions of imgVolA
-        imgSizesB = (int*)mxGetDimensions (prhs[IMG_VOL_B_INPUT]);  // sizes of imgVolB
+        imgSizesB = mxGetDimensions (prhs[IMG_VOL_B_INPUT]);  // sizes of imgVolB
         numDimsB = (int)mxGetNumberOfDimensions(prhs[IMG_VOL_B_INPUT]);  // number of dimensions of imgVolA
         
         if ((numDimsA != 4) || (numDimsB != 4))
@@ -103,6 +103,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		if ( (imgSizesA[2] < patchMatchParams->patchSizeX) || (imgSizesA[1] < patchMatchParams->patchSizeY) || (imgSizesA[3] < patchMatchParams->patchSizeT) ||
 			(imgSizesB[2] < patchMatchParams->patchSizeX) || (imgSizesB[1] < patchMatchParams->patchSizeY) || (imgSizesB[3] < patchMatchParams->patchSizeT)  )
         {
+            mexPrintf("imgSizesA %d %d %d \n", imgSizesA[1], imgSizesA[2], imgSizesA[3]);
+            mexPrintf("patchMatchParams %d %d %d \n", patchMatchParams->patchSizeX, patchMatchParams->patchSizeY, patchMatchParams->patchSizeT);
             mexErrMsgTxt("Error, the patch sizes are too large for at least one of the images.");
 			failure_return(plhs);
             return;
