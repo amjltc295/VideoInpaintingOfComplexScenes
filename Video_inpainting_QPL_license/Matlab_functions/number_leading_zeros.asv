@@ -1,0 +1,13 @@
+%this file creates a matrix with leading zeros before numbers
+%arguments :
+%1/ maximum number to be put into the matrix
+%2/ the number of leading zeros in front of the number
+
+function[strOut] = number_leading_zeros(number,nLeadingZeros)
+
+    maxLeadingNumber = 10^();
+    for ii=1:
+        
+    end
+
+end

@@ -1,0 +1,20 @@
+%this function converts a video from "difficult" formats to easy ones to
+%maniupulate
+
+fileIn = 'crossing_ladies.avi';
+videoIn = VideoWriter(fileIn);
+
+video_temp = mmread(file,1);
+maxFrames = abs(video_temp.nrFramesTotal);
+
+for ii=1:nbFrames
+    currFileName = currentFiles(ii).name;
+    imgTemp = imread(currFileName);
+    %imgTemp = imgTemp(1:68,1:264,:);
+    currFrame.cdata = normalise(double(imgTemp));
+    currFrame.colormap = [];
+    cd 'New_video';
+        writeVideo(vid,currFrame);
+    cd ..
+    %writeVideo(vid,currentFrame);
+end

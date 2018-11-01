@@ -1,0 +1,15 @@
+%this function writes a series of images from an image volume
+
+function[] = write_image_volume(imgVol,fileName)
+
+    sizeImgVol = size(imgVol);
+    numCharacters = floor(log10(sizeImgVol(3)));
+    
+    numbersMat = numbersLeadingZeros(sizeImgVol(3),numCharacters);
+    numbersMat(:,1) = numbersMat
+    for ii=1:size(imgVol,3)
+        imwrite(uint8(squeeze(imgVol(:,:,ii,:))),strcat(fileName,'_frame_',num2str(numbersMat),'.tiff'));
+        
+    end
+
+end

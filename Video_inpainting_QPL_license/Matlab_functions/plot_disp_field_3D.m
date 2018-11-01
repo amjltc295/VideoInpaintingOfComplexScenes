@@ -1,0 +1,98 @@
+%this function plots a displacement field in 3D
+
+function[figHandle] = plot_disp_field_3D(dispField,patchSize, occlusionMask)
+
+    if (ischar(dispField))
+        dispField = load(dispField);
+        dispField = dispField.dispField;
+    end
+    sizeDispField = size(dispField);
+    sizeDispField = sizeDispField([2 1 3]);
+    
+    hPatchSize = floor(patchSize/2);
+    epsilon = 0.001;
+    
+    [X,Y,Z] = meshgrid(1:sizeDispField(1),1:sizeDispField(2),1:sizeDispField(3));
+    %figure;
+    %quiver3(X,Y,Z,dispField(:,:,:,1),dispField(:,:,:,2),dispField(:,:,:,3));
+    
+    
+    %imgVolume size
+    imgVolSize = sizeDispField;
+    rowsSubplot = floor(sqrt(imgVolSize(3)));
+    colsSubplot = ceil(imgVolSize(3)/rowsSubplot);
+    
+    figure;
+    %axis off;
+
+    %%%set invalid indices to 0
+    if (hPatchSize(3)>0)
+        dispField(:,:,1:hPatchSize(3),:) = 0;
+        dispField(:,:,(end-hPatchSize(3)+1):end,:) = 0;
+    end
+    if (nargin >2)      %we have the occlusion mask
+        if (ischar(occlusionMask))
+            occlusionMask = double(imread(occlusionMask));
+        end
+        
+        for ii=1:size(dispField,3)
+            unoccInds = find(occlusionMask(:,:,ii) == 0);
+            for jj=1:size(dispField,4)
+                dispFieldTemp = dispField(:,:,ii,jj);
+                dispFieldTemp(unoccInds) = 0;
+                dispField(:,:,ii,jj) = dispFieldTemp;
+            end
+        end
+    else
+        dispField(1:hPatchSize(2),:,:,:) = 0;
+        dispField((end-hPatchSize(2)+1):end,:,:,:) = 0;
+        dispField(:,1:hPatchSize(1),:,:) = 0;
+        dispField(:,(end-hPatchSize(1)+1):end,:,:) = 0;
+    end
+    dispField = double(dispField); %convert to double for colour display purposes
+    
+    dispFieldX = dispField(:,:,:,1);
+    dispFieldY = dispField(:,:,:,2);
+    dispFieldT = dispField(:,:,:,3);
+    
+    maxFlow = max(max(abs(dispFieldX(:))),max(abs(dispFieldY(:))));
+    maxT = max(dispFieldT(:));
+
+    if (sizeDispField(3) == 1)  %single image
+        dispX = dispField(:,:,1,1);
+        dispY = dispField(:,:,1,2);
+        flowXY(:,:,1) = dispX;
+        flowXY(:,:,2) = dispY;
+        imgXY = double(flowToColor(flowXY,maxFlow));%imgXY = double(abs(255-flowToColor(flowXY)));
+        imgXY = imgXY./(max(imgXY(:)));
+        image(imgXY);
+        
+        return;
+    end
+    
+    for ii=1:sizeDispField(3)
+        currAxes = subplot_tight(rowsSubplot,colsSubplot,ii);      %set up the subplot  %
+        axesVector(ii) = currAxes;
+        
+        dispX = dispField(:,:,ii,1);
+        dispY = dispField(:,:,ii,2);
+        dispT = dispField(:,:,ii,3);
+
+        flowXY(:,:,1) = dispX;
+        flowXY(:,:,2) = dispY;
+        imgXY = double(flowToColor(flowXY,maxFlow));%imgXY = double(abs(255-flowToColor(flowXY)));
+        imgXY = imgXY./(max(imgXY(:)));
+        %set alpha data
+        currAlphaMap = abs(dispT);
+        currAlphaMap = currAlphaMap./(max(currAlphaMap(:))+epsilon);
+        
+        surf(dispT,imgXY,'EdgeAlpha',0.2,'CDataMapping','direct','LineWidth',0.2);
+        text('String',num2str(ii),'Position',[-1 -1 -1],'FontSize',10);
+        alpha(currAlphaMap);
+        %axis([1 sizeDispField(1) 1 sizeDispField(2) -sizeDispField(3) sizeDispField(3)]);%-maxT maxT
+    end
+    hLink = linkprop(axesVector,{'CameraPosition'});
+    key = 'graphics_linkprop';
+    setappdata(axesVector(1),key,hLink);
+
+end
