@@ -6,9 +6,9 @@ function[maxLevel,patchSizeX,patchSizeY,patchSizeT,textureFeaturesActivated,sigm
     %set default parameters
     sigmaColour = 75;
     maxLevel = 4;
-    patchSizeX = 5;
-    patchSizeY = 5;
-    patchSizeT = 5;
+    patchSizeX = 3;
+    patchSizeY = 3;
+    patchSizeT = 3;
     textureFeaturesActivated = 1;    %by default, features are activated
 
     % Parse the arguments to the function  
