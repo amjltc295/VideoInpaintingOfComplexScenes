@@ -12,6 +12,7 @@ function imgVolOut = start_inpaint_video_mod(varargin)
 
     videoFile = varargin{1};
     occlusionFile = varargin{2};
+    invert = varargin{5};
     [videoPath,file,~] = fileparts(videoFile);
     [occlusionPath,~,~] = fileparts(occlusionFile);
     
@@ -36,7 +37,9 @@ function imgVolOut = start_inpaint_video_mod(varargin)
     occVol = read_video(occlusionFile);
 
     % invert mask(out data: black = occlusion, this script: white = occlusion)
-    occVol = 1 - occVol;
+    if invert
+        occVol = 1 - occVol;
+    end
 
     if size(occVol, 1) < size(imgVol, 1)
         disp(sprintf('Masks w(%d) < video w(%d), cropping video w', size(occVol, 1), size(imgVol, 1)));
