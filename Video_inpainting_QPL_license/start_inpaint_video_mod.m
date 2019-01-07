@@ -13,6 +13,7 @@ function imgVolOut = start_inpaint_video_mod(varargin)
     videoFile = varargin{1};
     occlusionFile = varargin{2};
     invert = varargin{5};
+    preprocess_vos_mask = varargin{6};
     [videoPath,file,~] = fileparts(videoFile);
     [occlusionPath,~,~] = fileparts(occlusionFile);
     
@@ -36,8 +37,14 @@ function imgVolOut = start_inpaint_video_mod(varargin)
     disp('Reading input occlusion');
     occVol = read_video(occlusionFile);
 
+    if preprocess_vos_mask
+        disp('Preprocessing VOS orignial mask: make any pixel != 0 becomes 1')
+        occVol(occVol ~= 0) = 1;
+    end
+
     % invert mask(out data: black = occlusion, this script: white = occlusion)
     if invert
+        disp('Invert every 1 and 0')
         occVol = 1 - occVol;
     end
 
@@ -58,6 +65,8 @@ function imgVolOut = start_inpaint_video_mod(varargin)
     disp(sprintf('Masks/video final sizes: '))
     size_masks = size(occVol)
     size_video = size(imgVol)
+
+    sum(sum(sum(occVol)))
 
     % pad occlusion or image if length does not match
     %for j = size(occVol, 3) + 1:size(imgVol, 3)

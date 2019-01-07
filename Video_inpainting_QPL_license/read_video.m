@@ -41,7 +41,7 @@ function[imgVol] = read_video(varargin)
         end
     else        %we suppose that the input is a series of image files
         if ( (firstFrame == -1) || (lastFrame == -1))   %we try and read ALL the files in the current directory with the correct name
-            currentFiles = jointdir([dir(fullfile(videoFile, '*.png')), dir(fullfile(videoFile, '*.jpg'))]);
+            currentFiles = [dir(fullfile(videoFile, '*.png')); dir(fullfile(videoFile, '*.jpg'))];
             nbFrames = length(currentFiles)
             %read images
             for ii=1:nbFrames
