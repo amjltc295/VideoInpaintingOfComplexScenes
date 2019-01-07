@@ -13,7 +13,7 @@ function[outputPath] = run_free_form_videos(start_i, end_i)
 
     video_dirs = video_dirs(3:end);
     mask_dirs = mask_dirs(3:end);
-    root_out_dir = fullfile('.', 'free_form_test_out', 'VOS_original_face');
+    root_out_dir = fullfile('.', 'free_form_test_out', 'VOS_original_mask');
     mkdir(root_out_dir);
 
     for i = start_i : end_i
@@ -36,7 +36,7 @@ function[outputPath] = run_free_form_videos(start_i, end_i)
             continue
         end
 
-        invert = 1;
+        invert = 0;
         preprocess_vos_mask = 1;
         imgVolOut = start_inpaint_video_mod(video_dir, mask_dir, -1, -1, invert, preprocess_vos_mask);
 
