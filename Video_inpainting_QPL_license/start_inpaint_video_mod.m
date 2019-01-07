@@ -34,15 +34,36 @@ function imgVolOut = start_inpaint_video_mod(varargin)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     disp('Reading input occlusion');
     occVol = read_video(occlusionFile);
+
+    % invert mask(out data: black = occlusion, this script: white = occlusion)
     occVol = 1 - occVol;
-    
+
+    if size(occVol, 1) < size(imgVol, 1)
+        disp(sprintf('Masks w(%d) < video w(%d), cropping video w', size(occVol, 1), size(imgVol, 1)));
+        imgVol = imgVol(1:size(occVol, 1), :, :, :);
+    end
+
+    if size(occVol, 2) < size(imgVol, 2)
+        disp(sprintf('Masks h(%d) < video h(%d), cropping video h', size(occVol, 2), size(imgVol, 2)));
+        imgVol = imgVol(:, 1:size(occVol, 2), :, :);
+    end
+
+    if size(occVol, 3) > size(imgVol, 3)
+        disp('Masks length > video length, only take the front part of masks');
+        occVol = occVol(:, :, 1:size(imgVol, 3), :);
+    end
+    disp(sprintf('Masks/video final sizes: '))
+    size_masks = size(occVol)
+    size_video = size(imgVol)
+
     % pad occlusion or image if length does not match
-    for j = size(occVol, 3) + 1:size(imgVol, 3)
-        occVol(:, :, j) = occVol(:, :, j-1);
-    end
-    for j = size(imgVol, 3) + 1:size(occVol, 3)
-        imgVol(:, :, j, :) = imgVol(:, :, j-1, :);
-    end
+    %for j = size(occVol, 3) + 1:size(imgVol, 3)
+    %    occVol(:, :, j) = occVol(:, :, j-1);
+    %end
+    %for j = size(imgVol, 3) + 1:size(occVol, 3)
+    %   imgVol(:, :, j, :) = imgVol(:, :, j-1, :);
+    %end
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%% get the image domain     %%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
